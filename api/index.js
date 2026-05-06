@@ -8,20 +8,9 @@ const app = express();
 
 app.use(express.json());
 
-/**
- * API Endpoint for PDF Conversion
- * Vercel Serverless Function
- */
+// Vercel's serverless function for API routes
 app.post('/api/convert', async (req, res) => {
     try {
-        // Basic Authorization Check: Ensure request is handled safely
-        const authHeader = req.headers.authorization;
-        const sessionToken = req.headers['x-session-token'];
-
-        if (!authHeader && !sessionToken) {
-            console.log('Guest request processed: No auth token provided.');
-        }
-
         const { files } = req.body; 
         
         if (!files || files.length === 0) {
@@ -41,9 +30,10 @@ app.post('/api/convert', async (req, res) => {
     }
 });
 
-// Fallback for other routes to serve the frontend
-app.get('*', (req, res) => {
-    res.send('Please access the main index.html file via the Vercel frontend.');
+// This part is ONLY for internal Vercel routing. 
+// The actual frontend is served by Vercel's static hosting from index.html.
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
 });
 
 module.exports = app;
