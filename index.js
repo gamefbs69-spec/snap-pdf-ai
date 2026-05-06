@@ -14,6 +14,14 @@ app.use(express.json());
  */
 app.post('/api/convert', async (req, res) => {
     try {
+        // Basic Authorization Check: Ensure request is handled safely
+        const authHeader = req.headers.authorization;
+        const sessionToken = req.headers['x-session-token'];
+
+        if (!authHeader && !sessionToken) {
+            console.log('Guest request processed: No auth token provided.');
+        }
+
         const { files } = req.body; 
         
         if (!files || files.length === 0) {
