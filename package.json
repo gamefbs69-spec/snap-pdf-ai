@@ -2,6 +2,7 @@
   "name": "snappdf-ai",
   "version": "1.0.0",
   "description": "AI-powered high-speed document to PDF converter",
+  "main": "api/index.js",
   "scripts": {
     "test": "node tests_unit_integration.js"
   },
