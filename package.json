@@ -1,0 +1,24 @@
+{
+  "name": "snappdf-ai",
+  "version": "1.0.0",
+  "description": "AI-powered high-speed document to PDF converter",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests_unit_integration.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jspdf": "^2.5.1",
+    "pdfkit": "^0.13.0"
+  },
+  "keywords": [
+    "pdf",
+    "converter",
+    "ai",
+    "image-to-pdf",
+    "document-to-pdf"
+  ],
+  "author": "OpenClaw Assistant",
+  "license": "MIT"
+}
