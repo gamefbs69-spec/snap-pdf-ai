@@ -8,32 +8,26 @@ const app = express();
 
 app.use(express.json());
 
-// Vercel's serverless function for API routes
+// SERVE STATIC FILES (Is se index.html load hoga)
+app.use(express.static(path.join(__dirname, '../')));
+
+// API Endpoint for PDF Conversion
 app.post('/api/convert', async (req, res) => {
     try {
         const { files } = req.body; 
-        
         if (!files || files.length === 0) {
-            return res.status(400).json({ error: 'No files provided for conversion' });
+            return res.status(400).json({ error: 'No files provided' });
         }
-
         const result = await pipeline.processFiles(files);
-        
-        res.status(200).json({
-            success: true,
-            pdfUrl: result.url,
-            message: 'Conversion completed successfully'
-        });
+        res.status(200).json({ success: true, pdfUrl: result.url });
     } catch (error) {
-        console.error('Conversion Error:', error);
-        res.status(500).json({ error: 'Internal Server Error during PDF generation' });
+        res.status(500).json({ error: 'Conversion failed' });
     }
 });
 
-// This part is ONLY for internal Vercel routing. 
-// The actual frontend is served by Vercel's static hosting from index.html.
-app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: 'OK' });
+// CATCH-ALL ROUTE: Kisi bhi route par index.html dikhao
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 module.exports = app;
