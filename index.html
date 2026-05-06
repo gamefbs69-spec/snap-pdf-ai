@@ -288,17 +288,33 @@
             convertBtn.innerText = 'Converting... ⚙️';
 
             try {
-                // Prepare files for API
-                const formData = new FormData();
-                state.files.forEach((file, index) => {
-                    formData.append(`file_${index}`, file);
+                // Convert files to Base64 for stable serverless transmission
+                const filePromises = state.files.map(file => {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve({
+                            name: file.name,
+                            size: file.size,
+                            data: reader.result.split(',')[1] // Remove the data:image/png;base64, prefix
+                        });
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
                 });
 
-                // Real API Call to Vercel Backend
+                const base64Files = await Promise.all(filePromises);
+
+                // Real API Call using JSON instead of FormData for Vercel stability
                 const response = await fetch('/api/convert', {
                     method: 'POST',
-                    body: formData 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ files: base64Files })
                 });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+                    throw new Error(errorData.error || `Server responded with ${response.status}`);
+                }
 
                 const data = await response.json();
 
